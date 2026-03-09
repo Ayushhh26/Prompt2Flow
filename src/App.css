@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+h4 {
+  margin-bottom: 10px;
+}

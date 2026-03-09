@@ -1,0 +1,94 @@
+/* General styles for nodes */
+.node-container {
+  background-color: white;
+  border: 1px solid #d1d5db; /* Gray border */
+  border-radius: 12px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 8px 12px;
+  width: 144px; /* Fixed width */
+  text-align: center;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.node-container:hover {
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Hover shadow */
+}
+
+.node-icon {
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: center;
+  color: #2563eb; /* Icon color */
+}
+
+.node-label {
+  font-size: 0.875rem; /* Small font size */
+  font-weight: 600; /* Semi-bold */
+  color: #374151; /* Dark gray */
+}
+
+/* Circular node styles */
+.circular-node {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%; /* Fully circular */
+  background-color: white;
+  border: 1px solid #d1d5db; /* Gray border */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.2s ease-in-out;
+ 
+}
+
+.circular-node:hover {
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Hover shadow */
+}
+
+.circular-node-icon {
+  margin-bottom: 4px;
+  color: #2563eb; /* Icon color */
+}
+
+.circular-node-label {
+  font-size: 0.75rem; /* Extra small font size */
+  font-weight: 600; /* Semi-bold */
+  text-align: center;
+  padding: 0 8px;
+}
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-text {
+    background: linear-gradient(90deg, #2563eb, #10b981, #f59e0b);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-animation 3s infinite;
+    font-size: 40px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+  }
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
