@@ -53,6 +53,7 @@ Open `http://localhost:3000`.
 
 - **Never put API keys in frontend code**. Anything shipped to the browser can be extracted.
 - This repo uses a **server-side proxy** so the browser calls `/api/diagram` and only the server reads `OPENAI_API_KEY`.
+- The proxy includes **basic IP rate limiting** on `POST /api/diagram`. If you deploy behind a reverse proxy, you may need to enable `trust proxy` so client IPs are detected correctly.
 
 ## API proxy contract
 

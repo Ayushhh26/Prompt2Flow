@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
@@ -9,6 +10,14 @@ app.use(express.json({ limit: "1mb" }));
 app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
+
+const diagramLimiter = rateLimit({
+  windowMs: 60_000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api/diagram", diagramLimiter);
 
 app.post("/api/diagram", async (req, res) => {
   try {
