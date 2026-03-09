@@ -1,70 +1,65 @@
-# Getting Started with Create React App
+# Prompt2Flow
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Prompt2Flow is a small web app that turns **plain text** into an **editable flow diagram** (nodes + edges). It renders the result on an interactive canvas (React Flow), so you can drag nodes, connect steps, re-layout, and export a screenshot.
 
-## Available Scripts
+## What it does
 
-In the project directory, you can run:
+- **Text → diagram**: paste a process/system description and generate a flow graph.
+- **Interactive editing**: drag nodes, connect edges, zoom/pan.
+- **Auto layout**: apply horizontal/vertical layout (Dagre).
+- **Export**: download the canvas as a PNG.
+- **Theme**: light/dark mode.
 
-### `npm start`
+## Tech
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Frontend**: React (Create React App) + `@xyflow/react` (React Flow)
+- **Layout**: Dagre (`@dagrejs/dagre`)
+- **Icons**: `react-icons`, `lucide-react`
+- **Screenshot**: `html2canvas`
+- **LLM**: OpenAI (via a local server-side proxy)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Running locally
 
-### `npm test`
+### 1) Start the API proxy (server)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Create `server/.env` (do not commit it):
 
-### `npm run build`
+```bash
+OPENAI_API_KEY=your_openai_key_here
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Install and run:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+cd server
+npm install
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This starts the proxy on `http://localhost:3001`.
 
-### `npm run eject`
+### 2) Start the frontend
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+In another terminal:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm install
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Open `http://localhost:3000`.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Security notes (important)
 
-## Learn More
+- **Never put API keys in frontend code**. Anything shipped to the browser can be extracted.
+- This repo uses a **server-side proxy** so the browser calls `/api/diagram` and only the server reads `OPENAI_API_KEY`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## API proxy contract
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+`POST /api/diagram`
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Request body**:
+  - `prompt` (string)
+- **Response body**:
+  - `nodes` (array)
+  - `edges` (array)

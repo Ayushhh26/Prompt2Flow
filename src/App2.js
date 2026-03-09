@@ -168,17 +168,19 @@ function Flow() {
   const onLayout = useCallback(
     (layoutDirection) => {
       console.log(nodes);
-      const layouted = getLayoutedElements(nodes, edges, { layoutDirection });
+      const layouted = getLayoutedElements(nodes, edges, {
+        direction: layoutDirection,
+      });
 
       setNodes([...layouted.nodes]);
       setEdges([...layouted.edges]);
-      setLayoutDirection(layoutDirection == "LR" ? "TB" : "LR");
+      setLayoutDirection(layoutDirection === "LR" ? "TB" : "LR");
       fitView();
     },
-    [nodes, edges]
+    [edges, fitView, nodes, setEdges, setNodes]
   );
 
-  // Function to fetch data from GPT API
+  // Function to fetch data from API proxy
   const fetchGPTData = async () => {
     let inputText = prompt;
     if (prompt.trim() !== "") {
@@ -190,74 +192,19 @@ function Flow() {
     setLoading(true); // Show loading state
 
     try {
-      const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer API KEY`, // Replace with your valid API key
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [
-              {
-                role: "user",
-                content: `
-You are an expert at analyzing and converting code or instructional text into logical steps and visual flows.
-Your task is to:
-1. Analyze the given input (either code or plain text).
-2. Extract the key logical steps or concepts.
-3. Generate a JSON structure with:
-   - **nodes**: Each key step as a labeled node.
-   - **edges**: Connections between these steps as directional relationships.
-4. Ensure the output format is fully compatible with React Flow.
-
-### Output JSON Format:
-{
-  "nodes": [
-    {
-      "id": "1",
-      "data": { "label": "Step description here" },
-      "position": { "x": 0, "y": 0 }
-    }
-  ],
-  "edges": [
-    {
-      "id": "e1-2",
-      "source": "1",
-      "target": "2"
-    }
-  ]
-}
-
-Return only the JSON object. Do not include any additional text or explanation.
-Input: ${inputText}
-              `,
-              },
-            ],
-            temperature: 0.3,
-          }),
-        }
-      );
+      const response = await fetch("/api/diagram", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: inputText }),
+      });
       setPrompt("");
 
-      const { choices } = await response.json();
-      const rawContent = choices[0].message.content;
-
-      // Extract JSON from the response
-      let flowData;
-      try {
-        flowData = JSON.parse(rawContent);
-      } catch (error) {
-        // Attempt to extract JSON if extra text is included
-        const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          flowData = JSON.parse(jsonMatch[0]);
-        } else {
-          throw new Error("Invalid JSON format in GPT response");
-        }
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(errText || `Request failed: ${response.status}`);
       }
+
+      const flowData = await response.json();
 
       // Update nodes and edges
       const newNodes = flowData.nodes.map((node) => ({
@@ -425,7 +372,7 @@ Input: ${inputText}
           {/* Apply Layout Button */}
           <button
             onClick={() => {
-              layoutDirection == "LR" ? onLayout("LR") : onLayout("TB");
+              layoutDirection === "LR" ? onLayout("LR") : onLayout("TB");
             }}
             style={{
               padding: "10px 15px",
@@ -442,7 +389,7 @@ Input: ${inputText}
             onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
             onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
           >
-            {layoutDirection == "LR"
+            {layoutDirection === "LR"
               ? "Apply Vertical Layout"
               : "Apply Horizontal Layout"}
           </button>

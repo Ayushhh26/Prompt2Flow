@@ -1,11 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import App2 from "./App2";
-import SystemDesignDiagram from "./App3";
-import AwsMermaidGenerator from "./awsmermaid";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
